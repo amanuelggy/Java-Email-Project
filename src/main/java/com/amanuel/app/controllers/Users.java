@@ -15,26 +15,41 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.amanuel.app.models.User;
 import com.amanuel.app.services.UserService;
+import com.amanuel.app.validator.UserValidator;
 
 @Controller
 public class Users {
 		private UserService userService;
-		public Users(UserService userService) {
-			this.userService = userService;
-		}
+		 // NEW
+	    private UserValidator userValidator;
+	    
+	    // NEW
+	    public Users(UserService userService, UserValidator userValidator) {
+	        this.userService = userService;
+	        this.userValidator = userValidator;
+	    }
+		
 	    @RequestMapping("/registration")
 	    public String registerForm(@Valid @ModelAttribute("user") User user) {
 	        return "registrationPage";
 	    }
 	    @PostMapping("/registration")
 	    public String registration(@Valid @ModelAttribute("user") User user, BindingResult result, Model model, HttpSession session) {
+	    		// NEW
+	        userValidator.validate(user, result);
 		    	if(result.hasErrors()) {
 		    		return "registrationPage";
 		    	}
-		    	userService.saveWithUserRole(user);
+		    	userService.saveWithAdminRole(user);
 		    	return "redirect:/login";
 		    }
-	    
+	    // Admin
+	    @RequestMapping("/admin")
+	    public String adminPage(Principal principal, Model model) {
+	        String username = principal.getName();
+	        model.addAttribute("currentUser", userService.findByUsername(username));
+	        return "adminPage";
+	    }
 	    @RequestMapping("/login")
 	    public String login(@RequestParam(value="error", required=false) String error, @RequestParam(value="logout", required=false) String logout, Model model) {
 	    	 if(error != null) {
@@ -50,7 +65,7 @@ public class Users {
 	        // 1
 	        String username = principal.getName();
 	        model.addAttribute("currentUser", userService.findByUsername(username));
-	        return "homePage.jsp";
+	        return "homePage";
 	    }
 	
 }

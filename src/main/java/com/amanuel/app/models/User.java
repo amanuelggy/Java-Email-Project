@@ -3,7 +3,6 @@ package com.amanuel.app.models;
 import java.util.Date;
 import java.util.List;
 
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -16,6 +15,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.springframework.data.annotation.Transient;
 
@@ -26,7 +26,9 @@ public class User {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
+    @Size(min = 3)
     private String username;
+    @Size(min=5)
     private String password;
     @Transient
     private String passwordConfirmation;
