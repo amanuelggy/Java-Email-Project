@@ -35,7 +35,7 @@ public class Users {
 	    }
 	    @PostMapping("/registration")
 	    public String registration(@Valid @ModelAttribute("user") User user, BindingResult result, Model model, HttpSession session) {
-	    		// NEW
+	    		// validating
 	        userValidator.validate(user, result);
 		    	if(result.hasErrors()) {
 		    		return "registrationPage";
